@@ -1,4 +1,5 @@
 ﻿using Core.Data;
+using Core.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,15 +19,22 @@ namespace App.Pages.Account
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Required]
+        [BindProperty]
+        [DataType(DataType.Password)]
+        public string PrivateKey { get; set; }
+
         [BindProperty]
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
 
         SignInManager<AppUser> _sm;
+        UserManager<AppUser> _userManager;
 
-        public LoginModel(SignInManager<AppUser> sm)
+        public LoginModel(SignInManager<AppUser> sm, UserManager<AppUser> userManager)
         {
             _sm = sm;
+            _userManager = userManager;
         }
 
         public void OnGet()
@@ -38,16 +46,28 @@ namespace App.Pages.Account
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var result = await _sm.PasswordSignInAsync(UserName, Password, RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                bool succeeded = false;
+                ElastosAPI service = new ElastosAPI();
+                string did = await service.GetDIDAsync(PrivateKey);
+                if (string.IsNullOrEmpty(did))
+                    return Page();
+
+                var user = await _userManager.FindByNameAsync(UserName);
+
+                if (user.DID == did)
+                {
+                    var result = await _sm.PasswordSignInAsync(UserName, Password, RememberMe, lockoutOnFailure: false);
+                    succeeded = result.Succeeded;
+                }
+
+                if (succeeded)
                 {
                     return RedirectToLocal(returnUrl);
                 }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
-                }
+
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return Page();
+
             }
             return Page();
         }

@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Data;
+using Core.Helpers;
 using Core.Services;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -31,12 +32,11 @@ namespace App
                     }
                 }
                 catch { }
-                
+
                 var userMgr = (UserManager<AppUser>)services.GetRequiredService(typeof(UserManager<AppUser>));
                 if (!userMgr.Users.Any())
                 {
-                    userMgr.CreateAsync(new AppUser { UserName = "admin", Email = "admin@us.com" }, "admin");
-                    userMgr.CreateAsync(new AppUser { UserName = "demo", Email = "demo@us.com" }, "demo");
+                    CreateUser(userMgr);
                 }
 
                 // load application settings from appsettings.json
@@ -50,7 +50,7 @@ namespace App
                         services.GetRequiredService<IStorageService>().Reset();
                     }
                     catch { }
-                    
+
                     AppData.Seed(context);
                 }
             }
@@ -64,6 +64,13 @@ namespace App
         public static void Shutdown()
         {
             cancelTokenSource.Cancel();
+        }
+
+        public async static void CreateUser(UserManager<AppUser> userMgr)
+        {
+            ElastosAPI service = new ElastosAPI();
+            DIDResult result = await service.CreateDIDAsync();
+            await userMgr.CreateAsync(new AppUser { UserName = "admin", Email = "admin@us.com", DID = result.did, PrivateKey = result.privateKey }, "admin");
         }
     }
 }
