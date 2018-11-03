@@ -52,9 +52,8 @@ namespace App.Pages.Account
                 if (string.IsNullOrEmpty(did))
                     return Page();
 
-                var user = await _userManager.FindByNameAsync(UserName);
-
-                if (user.DID == did)
+                AppUser user = await _userManager.FindByNameAsync(UserName);
+                if (user?.DID == did)
                 {
                     var result = await _sm.PasswordSignInAsync(UserName, Password, RememberMe, lockoutOnFailure: false);
                     succeeded = result.Succeeded;
