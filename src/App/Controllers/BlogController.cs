@@ -31,6 +31,10 @@ namespace App.Controllers
 
         public async Task<IActionResult> Index(int page = 1, string term = "")
         {
+            ElastosAPI api = new ElastosAPI();
+            string did1 = await api.GetDIDAsync("C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D");
+            string did2 = await api.GetDIDAsync("B81F84282313A005087A3418F3FD903DD4162DDC63EDA38617FA8697419C377D");
+
             var blog = await _db.CustomFields.GetBlogSettings();
             var pager = new Pager(page, blog.ItemsPerPage);
             IEnumerable<PostItem> posts;
