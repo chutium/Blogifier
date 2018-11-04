@@ -35,6 +35,8 @@ namespace Core.Data
         public string Description { get; set; }
         [Required]
         public string Content { get; set; }
+        public string Hash { get; set; }
+        public string TxID { get; set; }
         public string Categories { get; set; }
         public string Cover { get; set; }
         public int PostViews { get; set; }

@@ -14,6 +14,7 @@ namespace Core.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<HtmlWidget> HtmlWidtes { get; set; }
         public DbSet<CustomField> CustomFields { get; set; }
+        public DbSet<AppUser> AspNetUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

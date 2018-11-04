@@ -24,6 +24,10 @@ namespace Core.Data
         [Display(Name = "User bio")]
         public string Bio { get; set; }
 
+        [Required]
+        [Display(Name = "Elastos DID")]
+        public string Did { get; set; }
+
         [StringLength(160)]
         public string Avatar { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using Core.Helpers;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -177,13 +178,29 @@ namespace Core.Data
             var field = _db.CustomFields.Where(f => f.AuthorId == 0 && f.Name == Constants.BlogCover).FirstOrDefault();
             var cover = field == null ? "" : field.Content;
 
-            if(item.Id == 0)
+            ElastosAPI api = new ElastosAPI();
+            var json = JObject.Parse(@"{
+                    'title': '',
+                    'hash': '',
+                    'date': ''
+                }");
+            json["title"] = item.Title;
+            json["hash"] = ElastosAPI.CreateMD5(item.Content);
+            json["date"] = item.Published;
+            string txid = api.SetDIDInfo(_db.AspNetUsers.Single(a => a.UserName == item.Author.AppUserName).PrivateKey,
+                DIDInfoKey.post,
+                json
+            );
+
+            if (item.Id == 0)
             {
                 post = new BlogPost
                 {
                     Title = item.Title,
                     Slug = item.Slug,
                     Content = item.Content,
+                    Hash = ElastosAPI.CreateMD5(item.Content),
+                    TxID = txid,
                     Description = item.Description ?? item.Title,
                     Categories = item.Categories,
                     Cover = item.Cover ?? cover,
@@ -204,6 +221,8 @@ namespace Core.Data
                 post.Title = item.Title;
                 post.Slug = item.Slug;
                 post.Content = item.Content;
+                post.Hash = ElastosAPI.CreateMD5(item.Content);
+                post.TxID = txid;
                 post.Description = item.Description ?? item.Title;
                 post.Categories = item.Categories;
                 post.AuthorId = item.Author.Id;
@@ -212,6 +231,8 @@ namespace Core.Data
                 await _db.SaveChangesAsync();
 
                 item.Slug = post.Slug;
+                item.Hash = post.Hash;
+                item.TxID = post.TxID;
             }
             return await Task.FromResult(item);
         }
@@ -233,6 +254,8 @@ namespace Core.Data
                 Title = p.Title,
                 Description = p.Description,
                 Content = p.Content,
+                Hash = p.Hash,
+                TxID = p.TxID,
                 Categories = p.Categories,
                 Cover = p.Cover,
                 PostViews = p.PostViews,
@@ -258,6 +281,8 @@ namespace Core.Data
                 Title = p.Title,
                 Description = p.Description,
                 Content = p.Content,
+                Hash = p.Hash,
+                TxID = p.TxID,
                 Categories = p.Categories,
                 Cover = p.Cover,
                 PostViews = p.PostViews,

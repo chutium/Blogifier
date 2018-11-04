@@ -69,8 +69,10 @@ namespace App
         public async static void CreateUser(UserManager<AppUser> userMgr)
         {
             ElastosAPI service = new ElastosAPI();
-            DIDResult result = service.CreateDID();
-            await userMgr.CreateAsync(new AppUser { UserName = "admin", Email = "admin@us.com", DID = result.did, PrivateKey = result.privateKey }, "admin");
+            DIDResult did_admin = service.CreateDID();
+            await userMgr.CreateAsync(new AppUser { UserName = "admin", Email = "admin@us.com", DID = did_admin.did, PrivateKey = did_admin.privateKey }, "admin");
+            DIDResult did_demo = service.CreateDID();
+            await userMgr.CreateAsync(new AppUser { UserName = "demo",  Email = "demo@us.com",  DID = did_demo.did,  PrivateKey = did_demo.privateKey  }, "demo" );
         }
     }
 }

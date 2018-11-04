@@ -26,6 +26,10 @@ namespace Core.Data
         [Required]
         public string Content { get; set; }
 
+        [Required]
+        public string Hash { get; set; }
+        public string TxID { get; set; }
+
         [StringLength(2000)]
         public string Categories { get; set; }
 

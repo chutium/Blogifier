@@ -19,6 +19,8 @@
                         <a href="~/authors/@Model.Post.Author.AppUserName">
                             <img class="post-meta-img" src="~/@Model.Post.Author.Avatar" alt="@Model.Post.Author.DisplayName" />
                             <span class="post-meta-author">@Model.Post.Author.DisplayName</span>
+                            <br />
+                            Elastos DID:&nbsp;<span class="post-meta-author">@Model.Post.Author.Did</span>
                         </a>
                         <time class="post-meta-time">@string.Format("{0:MMM d, yyyy}", Model.Post.Published)</time>
                         @if (!string.IsNullOrEmpty(Model.Post.Categories))
@@ -35,6 +37,14 @@
                     </div>
                 </header>
                 <div class="post-content">
+                    MD5 Hash of content: @Html.Raw(Model.Post.Hash)
+                </div>
+                <br />
+                <div class="post-content">
+                    Elastos verification txid: @Html.Raw(Model.Post.TxID)
+                </div>
+                <hr>
+                <div class="post-content">
                     @Html.Raw(Model.Post.Content)
                 </div>
 
@@ -43,19 +53,19 @@
                     <ul class="pagination justify-content-center">
                         @if (Model.Older != null)
                         {
-                        <li class="item item-prev">
-                            <a class="item-link" href="~/posts/@Model.Older.Slug" title="@Model.Older.Title">
-                                <i class="item-icon fa fa-angle-left"></i>
-                            </a>
-                        </li>
+                            <li class="item item-prev">
+                                <a class="item-link" href="~/posts/@Model.Older.Slug" title="@Model.Older.Title">
+                                    <i class="item-icon fa fa-angle-left"></i>
+                                </a>
+                            </li>
                         }
                         @if (Model.Newer != null)
                         {
-                        <li class="item item-next">
-                            <a class="item-link" href="~/posts/@Model.Newer.Slug" title="@Model.Newer.Title">
-                                <i class="item-icon fa fa-angle-right"></i>
-                            </a>
-                        </li>
+                            <li class="item item-next">
+                                <a class="item-link" href="~/posts/@Model.Newer.Slug" title="@Model.Newer.Title">
+                                    <i class="item-icon fa fa-angle-right"></i>
+                                </a>
+                            </li>
                         }
                     </ul>
                 }
