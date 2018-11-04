@@ -5,6 +5,7 @@ using Markdig;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +33,16 @@ namespace App.Controllers
         public async Task<IActionResult> Index(int page = 1, string term = "")
         {
             ElastosAPI api = new ElastosAPI();
-            string did1 = await api.GetDIDAsync("C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D");
-            string did2 = await api.GetDIDAsync("B81F84282313A005087A3418F3FD903DD4162DDC63EDA38617FA8697419C377D");
+            string did1 = api.GetDID("C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D");
+            string did2 = api.GetDID("B81F84282313A005087A3418F3FD903DD4162DDC63EDA38617FA8697419C377D");
+            string info = api.GetDIDInfo("c544b21d49f387e34e0d975f2f92aec7faefaacb136a6cf7c85616f6b8c189a3", DIDInfoKey.announcement);
+            /*string txid = api.SetDIDInfo("B81F84282313A005087A3418F3FD903DD4162DDC63EDA38617FA8697419C377D",
+                DIDInfoKey.announcement,
+                JObject.Parse(@"{
+                    'date': '2018-11-04',
+                    'text': 'Hello from Berlin Hackathon - Toni and Boran'
+                }")
+            );*/
 
             var blog = await _db.CustomFields.GetBlogSettings();
             var pager = new Pager(page, blog.ItemsPerPage);
