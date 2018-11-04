@@ -48,7 +48,7 @@ namespace App.Pages.Account
             {
                 bool succeeded = false;
                 ElastosAPI service = new ElastosAPI();
-                string did = await service.GetDIDAsync(PrivateKey);
+                string did = service.GetDID(PrivateKey);
                 if (string.IsNullOrEmpty(did))
                     return Page();
 
